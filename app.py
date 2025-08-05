@@ -34,8 +34,9 @@ class Report(db.Model):
 @app.route('/')
 def index():
     if 'user_id' in session:
-        reports = Report.query.order_by(Report.id.desc()).all()  # latest first
-        return render_template('home.html', reports=reports, logged_in=True)
+        all_reports = Report.query.filter(Report.user_id != session['user_id']).order_by(Report.id.desc()).all()
+        my_reports = Report.query.filter_by(user_id=session['user_id']).order_by(Report.id.desc()).all()
+        return render_template('home.html', all_reports=all_reports, my_reports=my_reports, logged_in=True)
     return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
